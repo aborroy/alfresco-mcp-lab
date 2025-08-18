@@ -297,6 +297,47 @@ Expected: tabular results (title, node ID, type, created date) with follow-up ac
 
   * Pull `gpt-oss` before launching the CLI; verify `ollama list`
 
+  ## Running the Chat UI
+
+  Follow these steps to set up and run the Chat UI locally:
+
+  ### 1. Create & Activate a Virtual Environment (Recommended)
+
+  ```bash
+  python -m venv .venv
+  source .venv/bin/activate
+  ```
+
+  ### 2. Install Dependencies
+
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+  ### 3. Start a Local MCP Server (SSE)
+
+  ```bash
+  python example_mcp_server.py --server_type sse --host 127.0.0.1 --port 3001
+  ```
+  > Leave this terminal running.
+
+  ### 4. Configure Environment for LiteLLM + MCP
+
+  In a new terminal, set the required environment variables:
+
+  ```bash
+  export LITELLM_MODEL="openai/gpt-4o-mini"
+  # If using a LiteLLM proxy:
+  # export LITELLM_BASE="https://api.ai.dev.experience.hyland.com/litellm"
+  # Point the app to the MCP SSE endpoint:
+  export MCP_SSE_URL="http://127.0.0.1:3001/sse"
+  ```
+
+  ### 5. Launch Chainlit
+
+  ```bash
+  chainlit run app.py -w
+  ```
 
 ## Credits & Acknowledgements
 

@@ -1,0 +1,19 @@
+# core UI + agent
+chainlit>=1.1.0
+
+# llamaindex core
+llama-index>=0.11.0
+
+# FunctionAgent + events are in core; LiteLLM wrapper + MCP toolspec are integrations:
+llama-index-llms-litellm>=0.6.0
+llama-index-tools-mcp>=0.3.0
+llama-index-workflows>=1.3.0
+# MCP server/client
+fastmcp>=2.0
+
+# AWS Bedrock (Claude, etc.) via LiteLLM requires boto3
+boto3>=1.34.0
+
+# optional: if you want .env files
+python-dotenv>=1.0.1
+
