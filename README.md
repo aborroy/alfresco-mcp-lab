@@ -85,12 +85,17 @@ docker compose up --build
 Alfresco will be available at [http://localhost:8080/alfresco](http://localhost:8080/alfresco)
 Chat App will be available at [http://localhost:8000/](http://localhost:8000)
 
-## 2 Build & Run the Alfresco MCP Server
+## 2) Build & Run the Alfresco MCP Server
 
 We are using Steve Reiner's Python Alfresco MCP
 
 * [Python Alfresco MCP Server (GitHub)](https://github.com/stevereiner/python-alfresco-mcp-server)
 
+### Initialize the Alfresco MCP Server Submodule
+
+```bash
+git submodule update --init --recursive
+```
 
 ### Create `.env`
 
