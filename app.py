@@ -142,8 +142,8 @@ async def on_start():
     await cl.Message(
         author="system",
         content=(
-            "🤝 Ready! Send me a message. I'll stream tokens and show MCP tool calls "
-            "as **Chainlit steps**.\n\n"
+            "🤝 Ready! Send me a message "
+            "\n\n"
             f"• Model: `{selected_model}`\n"
             f"• MCP URL: `{_env('MCP_URL', _env('MCP_SSE_URL', 'http://127.0.0.1:3001/mcp'))}`"
         ),
