@@ -1,0 +1,3 @@
+[submodule "python-alfresco-mcp-server"]
+	path = python-alfresco-mcp-server
+	url = https://github.com/stevereiner/python-alfresco-mcp-server.git
