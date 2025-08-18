@@ -72,6 +72,7 @@ mv alfresco_darwin_arm64 alf && chmod +x alf
 # Addons: (none)
 # Docker manages volumes: Yes
 ```
+> If the binary `alf` is considered as malicious by Mac OS, remove the quarantine flag with `xattr -d com.apple.quarantine ./alf`
 
 3. Start Alfresco:
 
@@ -173,28 +174,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/your-org/python-alfresco-mcp-server:1.1.0
     container_name: alfresco-mcp
     environment:
       TRANSPORT: ${TRANSPORT:-http}   # http | stdio | sse
       HOST: 0.0.0.0
       PORT: ${MCP_PORT:-8003}
-
       # ---- Alfresco connection (from .env) ----
       ALFRESCO_URL: ${ALFRESCO_URL}
       ALFRESCO_USERNAME: ${ALFRESCO_USERNAME}
       ALFRESCO_PASSWORD: ${ALFRESCO_PASSWORD}
       ALFRESCO_VERIFY_SSL: ${ALFRESCO_VERIFY_SSL:-false}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-
     ports:
       - "${MCP_PORT:-8003}:8003"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8003/health || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
 ```
 
 ### Create `.env`
