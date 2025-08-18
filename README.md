@@ -326,17 +326,17 @@ Expected: tabular results (title, node ID, type, created date) with follow-up ac
   In a new terminal, set the required environment variables:
 
   ```bash
-  export LITELLM_MODEL="openai/gpt-4o-mini"
+  export LITELLM_MODEL="litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0"
   # If using a LiteLLM proxy:
   # export LITELLM_BASE="https://api.ai.dev.experience.hyland.com/litellm"
   # Point the app to the MCP SSE endpoint:
-  export MCP_SSE_URL="http://127.0.0.1:3001/sse"
+  export MCP_URL=http://127.0.0.1:3001/mcp
   ```
 
   ### 5. Launch Chainlit
 
   ```bash
-  chainlit run app.py -w
+  python -m chainlit run app.py -w
   ```
 
 ## Credits & Acknowledgements
