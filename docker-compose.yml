@@ -1,17 +1,6 @@
 version: '3.8'
 
 services:
-  # MCP Server
-  mcp-server:
-    build:
-      context: .
-      dockerfile: Dockerfile.mcp
-    ports:
-      - "3001:3001"
-    environment:
-      - MCP_HOST=0.0.0.0
-      - MCP_PORT=3001
-
   # Chainlit App
   chainlit-app:
     build: .
@@ -25,14 +14,37 @@ services:
       - LITELLM_MODEL=${LITELLM_MODEL:-litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0}
       
       # MCP Server URL (now just reference the other container)
-      - MCP_URL=http://mcp-server:3001/mcp
+      - MCP_URL=http://alfresco-mcp:8003/mcp
       
       # System prompt with default value
       - SYSTEM_PROMPT=${SYSTEM_PROMPT:-You are a helpful assistant. Use MCP tools when appropriate. Explain your reasoning briefly}
       
       # LiteLLM settings
       - LITELLM_DROP_PARAMS=true
-    
+  
+  alfresco-mcp:
+      build:
+        context: .
+        dockerfile: Dockerfile.alfresco-mcp
+      image: ghcr.io/your-org/python-alfresco-mcp-server:1.1.0
+      container_name: alfresco-mcp
+      environment:
+        TRANSPORT: ${TRANSPORT:-http}   # http | stdio | sse
+        HOST: 0.0.0.0
+        PORT: ${MCP_PORT:-8003}
 
-    
-   
+        # ---- Alfresco connection (from .env) ----
+        ALFRESCO_URL: ${ALFRESCO_URL}
+        ALFRESCO_USERNAME: ${ALFRESCO_USERNAME}
+        ALFRESCO_PASSWORD: ${ALFRESCO_PASSWORD}
+        ALFRESCO_VERIFY_SSL: ${ALFRESCO_VERIFY_SSL:-false}
+        LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+      ports:
+        - "${MCP_PORT:-8003}:8003"
+      healthcheck:
+        test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8003/health || exit 1"]
+        interval: 30s
+        timeout: 5s
+        retries: 5
+      restart: unless-stopped
