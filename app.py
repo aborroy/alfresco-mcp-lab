@@ -17,6 +17,7 @@ from llama_index.core.agent.workflow import (
     ToolCall,
     ToolCallResult,
 )
+from llama_index.core.llms import ChatMessage
 
 # LiteLLM LLM wrapper for LlamaIndex
 # pip install llama-index-llms-litellm
@@ -66,7 +67,7 @@ async def build_agent(model: str = None, system_prompt: str = None) -> FunctionA
     # ---- LLM via LiteLLM (works with LiteLLM proxy or direct provider keys) ----
     # Docs: https://docs.llamaindex.ai/.../llms/litellm/
     model = model or _env(
-        "LITELLM_MODEL", "litellm_proxy/anthropic.claude-3-haiku-20240307-v1:0"
+        "LITELLM_MODEL", "litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0"
     )
     # Allow both LITELLM_BASE (preferred) and legacy LITELLM_API_BASE
     api_base = _env("LITELLM_BASE", _env("LITELLM_API_BASE", None))
@@ -111,13 +112,8 @@ async def on_start():
                 id="Model",
                 label="LLM Model",
                 values=[
-                    "litellm_proxy/anthropic.claude-3-haiku-20240307-v1:0",
-                    "litellm_proxy/anthropic.claude-3-5-sonnet-20240620-v1:0",
-                    "litellm_proxy/anthropic.claude-3-5-sonnet-20241022-v2:0",
                     "litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0",
-                    "litellm_proxy/openai/gpt-4o-mini",
-                    "litellm_proxy/openai/gpt-4o",
-                    "litellm_proxy/openai/gpt-4-turbo",
+                    "litellm_proxy/anthropic.claude-3-5-sonnet-20241022-v2:0",
                 ],
                 initial_index=0,
             ),
@@ -140,6 +136,8 @@ async def on_start():
     cl.user_session.set("agent", agent)
     cl.user_session.set("model", selected_model)
     cl.user_session.set("system_prompt", selected_system_prompt)
+    # Initialize empty chat history
+    cl.user_session.set("chat_history", [])
 
     await cl.Message(
         author="system",
@@ -165,6 +163,8 @@ async def on_settings_update(settings):
     cl.user_session.set("agent", agent)
     cl.user_session.set("model", selected_model)
     cl.user_session.set("system_prompt", selected_system_prompt)
+    # Reset chat history when settings change
+    cl.user_session.set("chat_history", [])
 
     await cl.Message(
         author="system",
@@ -179,6 +179,15 @@ async def on_message(message: cl.Message):
         agent = await build_agent()
         cl.user_session.set("agent", agent)
 
+    # Get chat history and add current user message
+    chat_history = cl.user_session.get("chat_history", [])
+    chat_history.append({"role": "user", "content": message.content})
+
+    # Convert chat history to LlamaIndex ChatMessage format
+    llama_messages = []
+    for msg in chat_history:
+        llama_messages.append(ChatMessage(role=msg["role"], content=msg["content"]))
+
     # Outgoing assistant message (we'll stream tokens into it)
     out = cl.Message(content="")
     await out.send()
@@ -186,8 +195,8 @@ async def on_message(message: cl.Message):
     # Keep track of tool steps by tool_id so we can append outputs later
     tool_steps: dict[str, cl.Step] = {}
 
-    # Start the run WITHOUT awaiting to get the streaming event iterator
-    handler = agent.run(user_msg=message.content)
+    # Start the run WITH chat history
+    handler = agent.run(user_msg=message.content, chat_history=llama_messages)
 
     async for event in handler.stream_events():
         # LLM token delta
@@ -228,3 +237,7 @@ async def on_message(message: cl.Message):
         await out.stream_token("")
         out.content = final_text
         await out.update()
+
+        # Add assistant response to chat history
+        chat_history.append({"role": "assistant", "content": final_text})
+        cl.user_session.set("chat_history", chat_history)
