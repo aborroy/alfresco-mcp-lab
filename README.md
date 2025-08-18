@@ -12,11 +12,7 @@
 * [3) Configure an MCP Client](#3-configure-an-mcp-client)
 * [4) Test Scenarios](#4-test-scenarios)
 * [Troubleshooting](#troubleshooting)
-* [Security Notes](#security-notes)
-* [Project Structure](#project-structure)
 * [Credits & Acknowledgements](#credits--acknowledgements)
-* [Contributing](#contributing)
-* [License](#license)
 
 ## Goals & Audience
 
