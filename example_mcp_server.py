@@ -19,5 +19,6 @@ def echo(text: str) -> str:
 
 
 if __name__ == "__main__":
-    # Streamable HTTP transport → endpoint at http://127.0.0.1:3001/mcp
-    mcp.run(transport="http", host="127.0.0.1", port=3001)
+    # Streamable HTTP transport → endpoint at http://0.0.0.0:3001/mcp
+    # Using 0.0.0.0 allows Docker containers to connect from host.docker.internal
+    mcp.run(transport="http", host="0.0.0.0", port=3001)

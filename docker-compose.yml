@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    ports:
+      - "3001:3001"
+    environment:
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=3001
+
+  # Chainlit App
+  chainlit-app:
+    build: .
+    ports:
+      - "8000:8000"
+
+    environment:
+      # LiteLLM Configuration
+      - LITELLM_API_KEY=${LITELLM_API_KEY}
+      - LITELLM_API_BASE=${LITELLM_API_BASE}
+      - LITELLM_MODEL=${LITELLM_MODEL:-litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0}
+      
+      # MCP Server URL (now just reference the other container)
+      - MCP_URL=http://mcp-server:3001/mcp
+      
+      # System prompt with default value
+      - SYSTEM_PROMPT=${SYSTEM_PROMPT:-You are a helpful assistant. Use MCP tools when appropriate. Explain your reasoning briefly}
+      
+      # LiteLLM settings
+      - LITELLM_DROP_PARAMS=true
+    
+
+    
+   
