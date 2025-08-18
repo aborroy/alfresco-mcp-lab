@@ -91,10 +91,12 @@ We are using Steve Reiner's Python Alfresco MCP
 
 * [Python Alfresco MCP Server (GitHub)](https://github.com/stevereiner/python-alfresco-mcp-server)
 
-### Initialize the Alfresco MCP Server Submodule
+### Clone the Alfresco MCP Server
+
+From within this repository directory, clone the Alfresco MCP server:
 
 ```bash
-git submodule update --init --recursive
+git clone https://github.com/stevereiner/python-alfresco-mcp-server.git
 ```
 
 ### Create `.env`
