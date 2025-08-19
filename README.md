@@ -1,6 +1,6 @@
 # Alfresco MCP Lab
 
-> A reproducible laboratory to experiment with the **Model Context Protocol (MCP)** against **Alfresco Community Edition** using Docker
+> A reproducible lab to experiment with the **Model Context Protocol (MCP)** against **Alfresco Community Edition** using Docker.
 
 ## Architecture
 
@@ -32,115 +32,159 @@
     └──────8000──────┘                                                                                                                  
 ```
 
-* [ALFRESCO](alfresco): Default installation for ACS Community Edition available at [http://localhost:8080/alfresco](http://localhost:8080/alfresco)
-* [MCP SERVER](mcp-server): [Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server) by *Steve Reiner* avaialable in available at [http://localhost:8003/mcp](http://localhost:8003/mcp)
-* [MCP CLIENT - CMD](mcp-client-cmd): [MCP CLI](https://github.com/chrishayuk/mcp-cli) by *chrishayuk* (used here with `mcp-proxy` setup)
-  * [Ollama](https://ollama.com/): a lightweight open-source runtime that lets you run, manage, and interact with large language models locally on your computer
-* [MCP CLIENT - UI](mcp-client-ui): [Chainlit](https://chainlit.io) app using by default Claude Sonnet as service, using [LiteLLM](https://www.litellm.ai) for model access
+## Components
+
+* **[ALFRESCO](alfresco)** – ACS Community Edition at **[http://localhost:8080/alfresco](http://localhost:8080/alfresco)**
+* **[MCP SERVER](mcp-server)** – [Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server) by *Steve Reiner*, exposed at **[http://localhost:8003/mcp](http://localhost:8003/mcp)**
+* **[MCP CLIENT – CLI](mcp-client-cmd)** – [MCP CLI](https://github.com/chrishayuk/mcp-cli) (run via `mcp-proxy`)
+
+  * **[Ollama](https://ollama.com/)** – local LLM runtime (this lab uses the `gpt-oss` model)
+* **[MCP CLIENT – UI](mcp-client-ui)** – [Chainlit](https://chainlit.io) app using **LiteLLM** as the LLM gateway (defaults to Claude Sonnet; configurable)
 
 ## Prerequisites
 
-* Docker and Docker Compose
-* For the CLI
-  * Ollama with the `gpt-oss` model pulled (around 13 GB)
-* For the UI
-  * LITELLM_API_KEY as environment variable used to store the API key for authenticating LLM requests
+* Docker & Docker Compose
+* **For the CLI**
+  * Ollama running on the host with the `gpt-oss` model pulled (≈13 GB):
 
-## Backend deployment
+    ```bash
+    brew install ollama   # macOS (or see ollama.com for your OS)
+    ollama pull gpt-oss
+    ```
+* **For the UI**
+  * `LITELLM_API_KEY` in your environment (or in `.env`) for your chosen provider
 
-Alfresco and MCP Server deployment for Docker Compose is available in `compose.yaml`
+> **Networking note**
+> `host.docker.internal` works out-of-the-box on Docker Desktop (macOS/Windows).
+> On Linux, add `extra_hosts: ["host.docker.internal:host-gateway"]` to services that must reach the host (e.g., to call Ollama running on the host).
+
+## Quick start
+
+Bring up Alfresco + MCP Server:
 
 ```bash
-cat compose.yaml
+docker compose up --build
+```
 
+Once started:
+
+* **Alfresco Repository:** [http://localhost:8080/alfresco](http://localhost:8080/alfresco)
+  (default credentials `admin` / `admin`)
+* **MCP Server:** [http://localhost:8003/mcp](http://localhost:8003/mcp)
+
+### About `compose.yaml`
+
+This repo’s `compose.yaml` includes sub-stacks:
+
+```yaml
 include:
   - mcp-server/compose.yaml
   - alfresco/compose.yaml
 ```
-> If the binary `alf` is considered as malicious by Mac OS, remove the quarantine flag with `xattr -d com.apple.quarantine ./alf`
 
-They can be started using the regular Docker Compose command:
-
-```bash
-docker compose up --build
-```
-
-Once started, following services will be available:
-
-* Alfresco Repository: http://localhost:8080/alfresco
-* MCP Server: http://localhost:8003/mcp
-
-## CLI usage
-
-There is a number of tools you can use as MCP Client, like Claude Desktop. Steve Reiner provides detailed instructions for this in https://github.com/stevereiner/python-alfresco-mcp-server?tab=readme-ov-file#mcp-client-setup-and-use.
-
-### MCP Client using CMD
-
-For this client we use a **local LLM (`gpt-oss`) via Ollama**
-
-Ensure `ollama` is running and the model is present:
+If your Compose version doesn’t support `include`, run with multiple files:
 
 ```bash
-ollama list
-# Expect:
-# gpt-oss:latest  ... 13 GB
+docker compose -f alfresco/compose.yaml -f mcp-server/compose.yaml up --build
 ```
 
-Run the CLI using following command: 
+## MCP client (CLI)
 
-```bash
-cd mcp-client-cmd
-docker compose run --rm mcp-client
-```
+This client uses a **local LLM (`gpt-oss`) via Ollama**.
 
-Type a sample prompt:
+1. Verify Ollama and model:
 
-```bash
-> Search Alfresco for documents containing "budget", return at most 5 results.
-```
+   ```bash
+   ollama list
+   # Expect something like:
+   # gpt-oss:latest   ...   13 GB
+   ```
 
-> You may use Steve Reiner sample prompts](https://github.com/stevereiner/python-alfresco-mcp-server/blob/main/prompts-for-claude.md) to validate end-to-end flows (search, fetch docs, metadata, etc.).
+2. Run the CLI:
 
-### MCP Client using UI
+   ```bash
+   cd mcp-client-cmd
+   docker compose run --rm mcp-client
+   ```
 
-Create a `.env` file from `.env.example` with `LITELLM` credentials:
+3. Try a prompt:
 
-```bash
-copy .env.example .env
+   ```
+   Search Alfresco for documents containing "budget", return at most 5 results.
+   ```
 
-cat .env
+Helpful prompts from Steve Reiner:
+[https://github.com/stevereiner/python-alfresco-mcp-server/blob/main/prompts-for-claude.md](https://github.com/stevereiner/python-alfresco-mcp-server/blob/main/prompts-for-claude.md)
 
-LITELLM_API_KEY=123456
-LITELLM_API_BASE=https://api.ai.dev.experience.hyland.com/litellm
-LITELLM_MODEL=litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0
-MCP_URL=http://host.docker.internal:8083/mcp
+## MCP client (UI)
 
-ALFRESCO_URL=http://host.docker.internal:8080
-ALFRESCO_USERNAME=admin
-ALFRESCO_PASSWORD=admin
-ALFRESCO_VERIFY_SSL=false
+1. Create your `.env` from the example and set LiteLLM + MCP/ACS endpoints.
 
-# Logging
-LOG_LEVEL=INFO
-```
+   * **macOS/Linux:**
 
-Run the UI using following command:
+     ```bash
+     cp .env.example .env
+     ```
+   * **Windows (PowerShell):**
 
-```bash
-docker compose up --build
-```
+     ```powershell
+     Copy-Item .env.example .env
+     ```
 
-The application will be available in http://localhost:8000
+   Example `.env`:
+
+   ```dotenv
+   # LiteLLM (replace with your provider/base/model)
+   LITELLM_API_KEY=YOUR_API_KEY
+   LITELLM_API_BASE=https://api.your-provider.example/v1
+   LITELLM_MODEL=anthropic/claude-3-5-sonnet
+
+   # MCP Server (note: 8003, not 8083)
+   MCP_URL=http://host.docker.internal:8003/mcp
+
+   # Alfresco
+   ALFRESCO_URL=http://host.docker.internal:8080
+   ALFRESCO_USERNAME=admin
+   ALFRESCO_PASSWORD=admin
+   ALFRESCO_VERIFY_SSL=false
+
+   # Logging
+   LOG_LEVEL=INFO
+   ```
+
+   > On Linux, if the UI container can’t reach the host, add:
+   >
+   > ```yaml
+   > extra_hosts:
+   >   - "host.docker.internal:host-gateway"
+   > ```
+
+2. Start the UI:
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. Open **[http://localhost:8000](http://localhost:8000)** and chat.
 
 ![MCP UI Sample Prompt](docs/mcp-ui-sample.png)
 
-## Additional information
+## Ports summary
 
-If you're interested in building every tool from scratch, follow this [instructions](doc/instrutions.md)
+* **Alfresco (ACS):** 8080
+* **MCP Server:** 8003 (`/mcp`)
+* **MCP UI (Chainlit):** 8000
+* **Ollama:** 11434
 
-## Credits & Acknowledgements
+## Building everything yourself
 
-* [Alfresco Installer](https://github.com/aborroy/alf-cli) (`alf-cli`) generates ACS Docker assets
-* [Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server) by *Steve Reiner*
-* [MCP CLI](https://github.com/chrishayuk/mcp-cli) by *chrishayuk* (used here with `mcp-proxy` setup)
-* MCP CLI UI uses [chainlit](https://chainlit.io)
+See **[docs/instructions.md](docs/instructions.md)** for from-scratch builds and deeper configuration.
+
+## Credits & acknowledgements
+
+* **[Alfresco Installer (`alf-cli`)](https://github.com/aborroy/alf-cli)** – generates ACS Docker assets
+* **[Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server)** by *Steve Reiner*
+* **[MCP CLI](https://github.com/chrishayuk/mcp-cli)** by *chrishayuk*
+* **[Chainlit](https://chainlit.io)**
+* **[LiteLLM](https://www.litellm.ai)**
+* **[Ollama](https://ollama.com/)**
