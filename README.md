@@ -57,6 +57,7 @@ include:
   - mcp-server/compose.yaml
   - alfresco/compose.yaml
 ```
+> If the binary `alf` is considered as malicious by Mac OS, remove the quarantine flag with `xattr -d com.apple.quarantine ./alf`
 
 They can be started using the regular Docker Compose command:
 
