@@ -1,0 +1,12 @@
+services:
+  chainlit-app:
+    build: .
+    environment:
+      - LITELLM_API_KEY=${LITELLM_API_KEY}
+      - LITELLM_API_BASE=${LITELLM_API_BASE}
+      - LITELLM_MODEL=${LITELLM_MODEL:-litellm_proxy/anthropic.claude-sonnet-4-20250514-v1:0}
+      - MCP_URL=http://host.docker.internal:8003/mcp
+      - SYSTEM_PROMPT=${SYSTEM_PROMPT:-You are a helpful assistant. Use MCP tools when appropriate. Explain your reasoning briefly}
+      - LITELLM_DROP_PARAMS=true
+    ports:
+      - "8000:8000"

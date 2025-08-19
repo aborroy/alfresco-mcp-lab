@@ -1,0 +1,3 @@
+include:
+  - mcp-server/compose.yaml
+  - alfresco/compose.yaml

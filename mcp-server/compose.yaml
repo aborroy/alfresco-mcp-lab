@@ -1,0 +1,16 @@
+services:
+  alfresco-mcp:
+    build:
+      context: .
+    environment:
+      TRANSPORT: ${TRANSPORT:-http}   # http | stdio | sse
+      HOST: 0.0.0.0
+      PORT: ${MCP_PORT:-8003}
+      # ---- Alfresco connection (from .env) ----
+      ALFRESCO_URL: ${ALFRESCO_URL}
+      ALFRESCO_USERNAME: ${ALFRESCO_USERNAME}
+      ALFRESCO_PASSWORD: ${ALFRESCO_PASSWORD}
+      ALFRESCO_VERIFY_SSL: ${ALFRESCO_VERIFY_SSL:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${MCP_PORT:-8003}:8003"

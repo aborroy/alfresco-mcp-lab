@@ -1,0 +1,12 @@
+services:
+  mcp-client:
+    build: .
+    tty: true
+    stdin_open: true
+    environment:
+      LLM_PROVIDER: ollama
+      LLM_MODEL: gpt-oss
+      OLLAMA_FORWARD_TARGET: host.docker.internal:11434
+      OLLAMA_LOCAL_URL: http://127.0.0.1:11434
+    volumes:
+      - ./server_config.json:/work/server_config.json:ro
