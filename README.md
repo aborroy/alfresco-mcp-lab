@@ -118,7 +118,13 @@ Helpful prompts from Steve Reiner:
 
 ## MCP client (UI)
 
-1. Create your `.env` from the example and set LiteLLM + MCP/ACS endpoints.
+1. Switch to the MCP Client UI folder
+
+```bash
+cd mcp-client-ui
+```
+
+2. Create your `.env` from the example and set LiteLLM + MCP/ACS endpoints.
 
    * **macOS/Linux:**
 
@@ -159,13 +165,13 @@ Helpful prompts from Steve Reiner:
    >   - "host.docker.internal:host-gateway"
    > ```
 
-2. Start the UI:
+3. Start the UI:
 
    ```bash
    docker compose up --build
    ```
 
-3. Open **[http://localhost:8000](http://localhost:8000)** and chat.
+4. Open **[http://localhost:8000](http://localhost:8000)** and chat.
 
 ![MCP UI Sample Prompt](docs/mcp-ui-sample.png)
 
