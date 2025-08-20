@@ -148,12 +148,6 @@ cd mcp-client-ui
    # MCP Server (note: 8003, not 8083)
    MCP_URL=http://host.docker.internal:8003/mcp
 
-   # Alfresco
-   ALFRESCO_URL=http://host.docker.internal:8080
-   ALFRESCO_USERNAME=admin
-   ALFRESCO_PASSWORD=admin
-   ALFRESCO_VERIFY_SSL=false
-
    # Logging
    LOG_LEVEL=INFO
    ```
