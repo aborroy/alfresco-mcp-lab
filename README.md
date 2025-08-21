@@ -163,6 +163,26 @@ cd mcp-client-ui
 
 ![MCP UI Sample Prompt](docs/mcp-ui-sample.png)
 
+You may try a more complex *prompt*, performing actions in Alfresco Repository and following a complete workflow:
+
+```
+Let's test a complete document management workflow:
+
+1. Create a folder called "Project_Alpha"
+2. Upload a document called "requirements.md" to that folder with some project requirements content
+3. Get the document properties to verify it was created correctly
+4. Update the document properties to add a title and description
+5. Checkout the document for editing
+6. Checkin the document as major version with appropriate comments
+7. Search for documents containing "requirements" using basic search (AFTS full-text)
+8. Try advanced search with date filters to find the same document (AFTS with filters)
+9. Use metadata search to find it by title property (AFTS property search)
+10. Use CMIS search with SQL query to find it by name (CMIS SQL)
+11. Download the document to verify content integrity
+
+Walk me through each step and confirm success before moving to the next.
+```
+
 ## Ports summary
 
 * Alfresco (ACS): 8080 (`/alfresco`)
