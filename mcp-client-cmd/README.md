@@ -1,4 +1,4 @@
-# MCP Client (CLI) in Docker — `mcp-client-cmd`
+# MCP Client (CLI) in Docker
 
 A minimal Docker setup to run the **Model Context Protocol (MCP) CLI** against an **Alfresco MCP Server**
 
@@ -6,7 +6,7 @@ It ships an opinionated entrypoint that:
 
 - Launches `mcp-cli` in interactive mode
 - Proxies the MCP Server via `mcp-proxy` (StreamableHTTP)
-- For **Ollama** on your host, forwards `127.0.0.1:11434` inside the container to your host’s `11434` using `socat`, so tools that expect a local Ollama "just work"
+- For Ollama on your host, forwards `127.0.0.1:11434` inside the container to your host’s `11434` using `socat`, so tools that expect a local Ollama "just work"
 
 > This README is specific to the `mcp-client-cmd/` folder. It assumes you already have an MCP Server running (for example, the Alfresco MCP Server from this repository)
 
@@ -21,15 +21,15 @@ Host (your laptop)                    Container: mcp-client
 └───────────────────────────┘        └─────────────────────────────────────┘
 ```
 
-* **mcp-cli** runs interactively
-* **mcp-proxy** connects to your Alfresco MCP Server over HTTP
-* **socat** forwards the container’s `127.0.0.1:11434` to the host `11434` so the Ollama client looks "local" from inside the container
+* `mcp-cli` runs interactively
+* `mcp-proxy` connects to your Alfresco MCP Server over HTTP
+* `socat` forwards the container’s `127.0.0.1:11434` to the host `11434` so the Ollama client looks "local" from inside the container
 
 ## Prerequisites
 
 - Docker and Docker Compose
-- An **Alfresco MCP Server** listening on `http://localhost:8003/mcp` (or another reachable URL)
-- **Ollama** running on your host and a model available (defaults to `gpt-oss`):  
+- An Alfresco MCP Server listening on `http://localhost:8003/mcp` (or another reachable URL)
+- Ollama running on your host and a model available (defaults to `gpt-oss`):  
   ```bash
   # Install/start Ollama and pre-pull the model you want
   ollama pull gpt-oss
@@ -71,7 +71,7 @@ Stop with `Ctrl+C`. Remove with `docker compose down`.
 }
 ```
 
-- **Change the URL** if your server is elsewhere (e.g., another host/port)
+- Change the URL if your server is elsewhere (e.g., another host/port)
 - For Linux hosts, also see the `extra_hosts` tip below
 
 ### LLM provider (Ollama) and model
@@ -135,14 +135,14 @@ mcp-cli tools --server alfresco --config-file /work/server_config.json
 
 ## Troubleshooting
 
-**1) Invalid API base URL: http://host.docker.internal:11434**  
-Inside the container, the client speaks to **`http://127.0.0.1:11434`** (not `host.docker.internal`). The entrypoint already forwards that to your host’s `11434`. Make sure:
+1) Invalid API base URL: http://host.docker.internal:11434
+Inside the container, the client speaks to `http://127.0.0.1:11434` (not `host.docker.internal`). The entrypoint already forwards that to your host’s `11434`. Make sure:
 
 - Ollama is running on the host (`curl http://localhost:11434/api/tags`)
 - `OLLAMA_FORWARD_TARGET` is correct (host IP/port)
 - You didn’t override `OLLAMA_LOCAL_URL` away from `http://127.0.0.1:11434`
 
-**2) Linux: `host.docker.internal` does not resolve**  
+2) Linux: `host.docker.internal` does not resolve
 Add this to `compose.yaml` under the service or run with `--add-host`:
 
 ```yaml
@@ -150,10 +150,10 @@ extra_hosts:
   - "host.docker.internal:host-gateway"
 ```
 
-**3) The MCP server isn’t reachable**  
+3) The MCP server isn’t reachable
 - Ensure it’s listening on the right interface/port (`0.0.0.0:8003` if running in Docker)
 - Update `server_config.json` to the correct URL
 - Test from the host: `curl http://localhost:8003/mcp` (you should get a response/handshake endpoint)
 
-**4) No Ollama models available**  
+4) No Ollama models available
 Run on the host: `ollama pull gpt-oss` (or your chosen model)

@@ -6,17 +6,17 @@ It’s containerized, configurable via `.env`, and uses **LiteLLM** as the LLM g
 
 ## What you get
 
-- **Chainlit** front-end (`app.py`) that starts a chat UI on port **8000**
-- **MCP** connection via an HTTP endpoint provided in `MCP_URL` (Streamable HTTP, typically `/mcp`)
-- **LiteLLM** integration via `LITELLM_API_BASE`, `LITELLM_API_KEY`, and `LITELLM_MODEL`
+- Chainlit front-end (`app.py`) that starts a chat UI on port 8000
+- MCP connection via an HTTP endpoint provided in `MCP_URL` (Streamable HTTP, typically `/mcp`)
+- LiteLLM integration via `LITELLM_API_BASE`, `LITELLM_API_KEY`, and `LITELLM_MODEL`
 
 > No MCP proxy or Ollama forwarding is set up here. Point the UI directly at your MCP Server’s Streamable HTTP endpoint using `MCP_URL`
 
 ## Prerequisites
 
-- **Docker** (and Docker Compose v2)
-- An **MCP Server** reachable via HTTP (e.g., `http://host.docker.internal:8003/mcp`)
-- A **LiteLLM** endpoint + API key (public cloud or your internal proxy)
+- Docker and Docker Compose
+- An MCP Server reachable via HTTP (e.g., `http://host.docker.internal:8003/mcp`)
+- A LiteLLM endpoint + API key (public cloud or your internal proxy)
 
 ## Quick start
 
@@ -38,17 +38,17 @@ MCP_URL=http://host.docker.internal:8003/mcp
 LOG_LEVEL=INFO
 ```
 
-> **macOS/Windows:** `host.docker.internal` resolves to the host automatically.  
-> **Linux:** replace with your host IP (e.g., `http://172.17.0.1:8003/mcp`).
+> macOS/Windows: `host.docker.internal` resolves to the host automatically.  
+> Linux: replace with your host IP (e.g., `http://172.17.0.1:8003/mcp`).
 
 3) Build and run:
 ```bash
 docker compose up --build
 ```
 
-4) Open the UI: **http://localhost:8000**
+4) Open the UI: http://localhost:8000
 
-Stop with `Ctrl+C`. Remove with `docker compose down`.
+Stop with `Ctrl+C`. Remove with `docker compose down`
 
 ## Local development (without Docker)
 
@@ -75,47 +75,35 @@ cp .env.example .env
 chainlit run app.py --host 0.0.0.0 --port 8000
 ```
 
-Open **http://localhost:8000**.
+Open http://localhost:8000
 
 ## Configuration reference
 
 These variables are read from `.env` (Compose will also pick them up automatically):
 
-- **LITELLM_API_KEY** — API key for your LiteLLM gateway.
-- **LITELLM_API_BASE** — Base URL of the LiteLLM gateway (e.g., `https://api.example.com/litellm`).
-- **LITELLM_MODEL** — Fully-qualified model name understood by your LiteLLM.
-- **MCP_URL** — Streamable HTTP endpoint of your MCP Server (typically ends with `/mcp`).  
+- LITELLM_API_KEY — API key for your LiteLLM gateway.
+- LITELLM_API_BASE — Base URL of the LiteLLM gateway (e.g., `https://api.example.com/litellm`).
+- LITELLM_MODEL — Fully-qualified model name understood by your LiteLLM.
+- MCP_URL — Streamable HTTP endpoint of your MCP Server (typically ends with `/mcp`).  
   Examples:
   - `http://host.docker.internal:8003/mcp` (Docker Desktop on macOS/Windows)
   - `http://172.17.0.1:8003/mcp` (Linux; replace with your host IP)
-- **LOG_LEVEL** — e.g., `DEBUG`, `INFO`, `WARNING`.
+- LOG_LEVEL — e.g., `DEBUG`, `INFO`, `WARNING`.
 
-The included `compose.yaml` wires these environment variables into the container and publishes port **8000**.
+The included `compose.yaml` wires these environment variables into the container and publishes port **8000**
 
 ## Troubleshooting
 
-**1) Blank UI or "cannot connect" errors**  
+1) Blank UI or "cannot connect" errors
 - Ensure `MCP_URL` is reachable from the container host. Test from your host:
   ```bash
   curl -i http://host.docker.internal:8003/mcp
   ```
 - On Linux, replace `host.docker.internal` with your host IP
 
-**2) 401/403 from the LLM**  
+2) 401/403 from the LLM
 - Double-check `LITELLM_API_KEY` and `LITELLM_API_BASE`
 - Confirm the `LITELLM_MODEL` exists/allowed in your gateway
 
-**3) Port 8000 already in use**  
+3) Port 8000 already in use
 - Edit the port mapping in `compose.yaml`, e.g. `- "8080:8000"`
-
-## Project layout
-
-```
-mcp-client-ui/
-├─ app.py              # Chainlit UI
-├─ compose.yaml        # Docker Compose (build + run the UI)
-├─ Dockerfile          # Container image for the UI
-├─ requirements.txt    # Python deps
-├─ .env.example        # Template for configuration
-└─ .gitignore
-```

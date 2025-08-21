@@ -139,7 +139,7 @@ cd mcp-client-ui
    LITELLM_API_BASE=https://api.your-provider.example/v1
    LITELLM_MODEL=anthropic/claude-3-5-sonnet
 
-   # MCP Server (note: 8003, not 8083)
+   # MCP Server
    MCP_URL=http://host.docker.internal:8003/mcp
 
    # Logging
