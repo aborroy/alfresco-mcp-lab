@@ -4,42 +4,36 @@
 
 ## Architecture
 
-```                                                                                                          
-    ┌────────────────┐ 
-    │                │ 
-    │     Ollama     │ 
-    │                │ 
-    └────────────────┘                                                                                                           
-            |                                                                                                
-            | 11434                                                                                                
-            |                                                                                                 
-    ┌────────────────┐        ┌───────────────────┐        ┌───────────────────┐                             
-    │                │        │                   │        │                   │                             
-    │                │  8003  │                   │  8080  │                   │                             
-    │   MCP CLIENT   │________│    MCP SERVER     │________│     ALFRESCO      │                             
-    │      CMD       │        │                   │        │                   │                             
-    │                │        │                   │        │                   │                             
-    └────────────────┘        └───────────────────┘        └───────────────────┘                             
-                                       |                                                                                    
-                                       |                                                                                     
-                                       |                                                                                      
-    ┌────────────────┐                 | 8003
-    │                │                 |
-    │                │                 |
-    │   MCP CLIENT   │_________________| 
-    │      UI        │ 
-    │                │ 
-    └──────8000──────┘                                                                                                                  
+```mermaid                                                                                                          
+flowchart LR
+  O("`OLLAMA
+  local gpt-oss`")
+  CIC("`CIC LiteLLM
+  service claude`")
+  CMD("`MCP CLIENT 
+  CMD`")
+  UI("`MCP CLIENT 
+  UI`")
+  S("`MCP SERVER
+  community project`")
+  A("`ALFRESCO
+  Community`")
+
+  CMD -- "8003" --> S
+  S   -- "8080" --> A
+  UI  -- "8003" --> S
+
+  O -. "11434" .-> CMD
+  CIC -. "443" .-> UI                                                                                                                 
 ```
 
 ## Components
 
-* **[ALFRESCO](alfresco)** – ACS Community Edition at **[http://localhost:8080/alfresco](http://localhost:8080/alfresco)**
-* **[MCP SERVER](mcp-server)** – [Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server) by *Steve Reiner*, exposed at **[http://localhost:8003/mcp](http://localhost:8003/mcp)**
-* **[MCP CLIENT – CLI](mcp-client-cmd)** – [MCP CLI](https://github.com/chrishayuk/mcp-cli) (run via `mcp-proxy`)
-
-  * **[Ollama](https://ollama.com/)** – local LLM runtime (this lab uses the `gpt-oss` model)
-* **[MCP CLIENT – UI](mcp-client-ui)** – [Chainlit](https://chainlit.io) app using **LiteLLM** as the LLM gateway (defaults to Claude Sonnet; configurable)
+* [ALFRESCO](alfresco) – ACS Community Edition at [http://localhost:8080/alfresco](http://localhost:8080/alfresco)
+* [MCP SERVER](mcp-server) – [Python Alfresco MCP Server](https://github.com/stevereiner/python-alfresco-mcp-server) by *Steve Reiner*, exposed at [http://localhost:8003/mcp](http://localhost:8003/mcp)
+* [MCP CLIENT – CLI](mcp-client-cmd) – [MCP CLI](https://github.com/chrishayuk/mcp-cli)
+  * [Ollama](https://ollama.com/) – local LLM runtime (this lab uses the `gpt-oss` model)
+* [MCP CLIENT – UI](mcp-client-ui) – [Chainlit](https://chainlit.io) app using *LiteLLM* as the LLM gateway (defaults to Claude Sonnet; configurable)
 
 ## Prerequisites
 
