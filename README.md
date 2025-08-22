@@ -216,16 +216,16 @@ The `mcp-server/` folder wires the lab to [python-alfresco-mcp-server](https://g
 
 ## Model Context Protocol (MCP) — spec & SDKs
 
-* Spec & Concepts: Tools, Resources, Prompts, transports, and protocol revisions are covered in the official docs/spec. Start here for how tools are defined and invoked ([Model Context Protocol](https://modelcontextprotocol.io/docs/concepts/tools)
-* Official SDKs: TypeScript, Python, **Java**, Go, Kotlin, Swift, C#, Ruby, Rust. Each supports building servers/clients with the same core semantics ([Model Context Protocol](https://modelcontextprotocol.io/docs/sdk)
+* Spec & Concepts: Tools, Resources, Prompts, transports, and protocol revisions are covered in the official docs/spec. Start here for how tools are defined and invoked ([Model Context Protocol](https://modelcontextprotocol.io/docs/concepts/tools))
+* Official SDKs: TypeScript, Python, **Java**, Go, Kotlin, Swift, C#, Ruby, Rust. Each supports building servers/clients with the same core semantics ([Model Context Protocol](https://modelcontextprotocol.io/docs/sdk))
 
 ### Best ways to implement an Alfresco MCP server
 
 1. Python + FastMCP (used for this lab)
-   Fast to stand up, battle-tested with Alfresco via `python-alfresco-mcp-server`, and supports STDIO/HTTP/SSE out of the box. Ideal for demos and production pilots. ([GitHub](https://github.com/stevereiner/python-alfresco-mcp-server)
+   Fast to stand up, battle-tested with Alfresco via `python-alfresco-mcp-server`, and supports STDIO/HTTP/SSE out of the box. Ideal for demos and production pilots. ([GitHub](https://github.com/stevereiner/python-alfresco-mcp-server))
 
 2. Java + Spring AI (MCP Java SDK + Spring Boot starters)
-   First-class Java SDK maintained with Spring; Spring AI adds auto-config, starters, and both client/server support. Best fit for teams standardizing on JVM/Spring. ([MCP](https://github.com/modelcontextprotocol/java-sdk), [Spring AI](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html)
+   First-class Java SDK maintained with Spring; Spring AI adds auto-config, starters, and both client/server support. Best fit for teams standardizing on JVM/Spring. ([MCP](https://github.com/modelcontextprotocol/java-sdk), [Spring AI](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html))
 
 3. TypeScript (official SDK)
    Great if your stack is Node/TS or you want to align with Claude Desktop/TS examples. Same protocol model, rich Zod schemas. ([Model Context Protocol](https://modelcontextprotocol.io/docs/sdk))
