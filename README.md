@@ -195,6 +195,47 @@ Walk me through each step and confirm success before moving to the next.
 
 See [docs/instructions.md](docs/instructions.md) for from-scratch builds and deeper configuration
 
+---
+
+## MCP Server tools for Alfresco
+
+The `mcp-server/` folder wires the lab to **python-alfresco-mcp-server** (built on FastMCP 2.0). It exposes a focused toolset for content search + document lifecycle against Alfresco. In the latest 1.1 line, the server documents the following capabilities and transports (STDIO, HTTP, SSE)
+
+### Tools
+
+* Search Content: Full-text search over *content and properties*, basic wildcards
+* Advanced Search (AFTS): AFTS query language with date filters, sort, field targeting (tool name appears as the AFTS/“advanced search” tool in docs)
+* Metadata Search: Property predicates (equals/contains/ranges) over node metadata
+* CMIS (SQL-like) Search: CMIS query for complex discovery
+* Upload: Create a new document with content
+* Download: Fetch document content by id/path
+* Check-out / Check-in / Cancel check-out: Working-copy flow and new versions (major/minor with comments)
+* Create Folder: Create folder by parent id/path
+* Folder Browse: List children + basic metadata
+* Delete Node: Trash (or permanent) delete for documents/folders
+* Get / Set Properties: Read/update node properties (incl. name)
+* Repository Info *(also exposed as a Resource)*: Edition, version, status and module configuration
+
+## Model Context Protocol (MCP) — spec & SDKs
+
+* Spec & Concepts: Tools, Resources, Prompts, transports, and protocol revisions are covered in the official docs/spec. Start here for how tools are defined and invoked ([Model Context Protocol][https://modelcontextprotocol.io/docs/concepts/tools])
+* Official SDKs: TypeScript, Python, **Java**, Go, Kotlin, Swift, C#, Ruby, Rust. Each supports building servers/clients with the same core semantics ([Model Context Protocol][https://modelcontextprotocol.io/docs/sdk])
+
+### Best ways to implement an Alfresco MCP server
+
+1. Python + FastMCP (used for this lab)
+   Fast to stand up, battle-tested with Alfresco via `python-alfresco-mcp-server`, and supports STDIO/HTTP/SSE out of the box. Ideal for demos and production pilots. ([GitHub][https://github.com/stevereiner/python-alfresco-mcp-server])
+
+2. Java + Spring AI (MCP Java SDK + Spring Boot starters)
+   First-class Java SDK maintained with Spring; Spring AI adds auto-config, starters, and both client/server support. Best fit for teams standardizing on JVM/Spring. ([MCP][https://github.com/modelcontextprotocol/java-sdk], [Spring AI][https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html])
+
+3. TypeScript (official SDK)
+   Great if your stack is Node/TS or you want to align with Claude Desktop/TS examples. Same protocol model, rich Zod schemas. ([Model Context Protocol][https://modelcontextprotocol.io/docs/sdk])
+
+> You can also target Go/Kotlin/Swift/C#/Ruby/Rust via the official SDKs when platform constraints or existing services make those a better fit
+
+---
+
 ## Credits & acknowledgements
 
 * [Alfresco Installer (`alf-cli`)](https://github.com/aborroy/alf-cli) generates ACS Docker assets
